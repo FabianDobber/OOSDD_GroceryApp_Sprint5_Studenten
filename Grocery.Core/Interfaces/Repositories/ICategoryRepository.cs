@@ -1,12 +1,13 @@
-﻿using System;
+﻿using Grocery.Core.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Grocery.Core.Interfaces.Repositories
 {
-    public interface ICategoryrepository
+    public interface ICategoryRepository
     {
+        Task<IEnumerable<Category>> GetAllAsync();
+        Task<Category?> GetAsync(int id);
+        Task<Category?> GetAsync(string name);
     }
 }
