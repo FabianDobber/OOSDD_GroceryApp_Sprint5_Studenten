@@ -13,5 +13,8 @@ namespace Grocery.Core.Interfaces.Repositories
         public Product? Delete(Product item);
 
         public Product? Update(Product item);
+
+        Task<IEnumerable<Product>> GetAllAsync();
+
     }
 }

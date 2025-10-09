@@ -14,7 +14,7 @@ namespace Grocery.Core.Models
             ProductId = productId;
             Amount = amount;
         }
-
-        public Product Product { get; set; } = new(0, "None", 0);
+        public Product Product { get; set; } =
+            new(0, "None", 0, new DateOnly(2015, 10, 21), 0m);
     }
 }
