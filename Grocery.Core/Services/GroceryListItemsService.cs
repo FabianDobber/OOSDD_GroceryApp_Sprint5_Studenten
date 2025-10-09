@@ -53,10 +53,9 @@ namespace Grocery.Core.Services
         {
             foreach (GroceryListItem g in groceryListItems)
             {
-                g.Product = _productRepository.Get(g.ProductId) ?? new(0, "", 0);
+                g.Product = _productRepository.Get(g.ProductId) ?? new Product(0, "", 0, new DateOnly(2015, 10, 21), 0m);
             }
         }
-
         public List<BestSellingProducts> GetBestSellingProducts(int topX = 5)
         {
             Dictionary<Product, int> productCount = [];
