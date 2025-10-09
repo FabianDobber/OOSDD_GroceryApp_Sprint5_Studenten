@@ -6,6 +6,8 @@ namespace Grocery.Core.Models
     {
         [ObservableProperty]
         public int stock;
+
+        public DateOnly DateOnly { get; private set; }
         public DateOnly ShelfLife { get; set; }
 
         public decimal Price { get; set; }
