@@ -1,29 +1,27 @@
-﻿// In bestand: Grocery.App/ViewModels/CategoriesViewModel.cs
-
-using Grocery.Core.Interfaces.Repositories;
+﻿using Grocery.Core.Interfaces.Services; 
 using Grocery.Core.Models;
-using System.Collections.ObjectModel; // Belangrijk voor collecties die de UI updaten
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Grocery.App.ViewModels
 {
-
     public partial class CategoriesViewModel
     {
-        private readonly ICategoryRepository _categoryRepository;
+        private readonly ICategoryService _categoryService;
 
         public ObservableCollection<Category> Categories { get; set; }
 
-        public CategoriesViewModel(ICategoryRepository categoryRepository)
+        public CategoriesViewModel(ICategoryService categoryService) 
         {
-            _categoryRepository = categoryRepository;
+            _categoryService = categoryService;
             Categories = new ObservableCollection<Category>();
 
             Task task = LoadCategoriesAsync();
         }
+
         private async Task LoadCategoriesAsync()
         {
-            var categories = await _categoryRepository.GetAllAsync();
+            var categories = await _categoryService.GetAllCategoriesAsync();
 
             if (categories != null)
             {

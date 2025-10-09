@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Grocery.Core.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Grocery.Core.Interfaces.Services
 {
-    internal interface ICategoryService
+    public interface ICategoryService
     {
+        Task<IEnumerable<Category>> GetAllCategoriesAsync();
+        Task<Category> GetCategoryByIdAsync(int id);
     }
 }

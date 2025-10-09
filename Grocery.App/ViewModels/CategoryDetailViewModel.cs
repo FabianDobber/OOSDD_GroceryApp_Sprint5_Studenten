@@ -1,20 +1,16 @@
-﻿// In bestand: Grocery.App/ViewModels/CategoryDetailViewModel.cs
-
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Grocery.Core.Interfaces.Repositories;
+using Grocery.Core.Interfaces.Services; 
 using Grocery.Core.Models;
 using System.Collections.ObjectModel;
 
 namespace Grocery.App.ViewModels
 {
-
     [QueryProperty(nameof(CategoryId), "CategoryId")]
     public partial class CategoryDetailViewModel : ObservableObject
     {
-        private readonly ICategoryRepository _categoryRepo;
-        private readonly IProductRepository _productRepo;
-        private readonly IProductCategoryRepository _productCategoryRepo;
+        private readonly ICategoryService _categoryService;
+        private readonly IProductCategoryService _productCategoryService;
 
         [ObservableProperty]
         private Category currentCategory;
@@ -25,11 +21,10 @@ namespace Grocery.App.ViewModels
         public ObservableCollection<Product> AssignedProducts { get; } = new();
         public ObservableCollection<Product> AvailableProducts { get; } = new();
 
-        public CategoryDetailViewModel(ICategoryRepository catRepo, IProductRepository prodRepo, IProductCategoryRepository pcRepo)
+        public CategoryDetailViewModel(ICategoryService catService, IProductCategoryService prodCatService)
         {
-            _categoryRepo = catRepo;
-            _productRepo = prodRepo;
-            _productCategoryRepo = pcRepo;
+            _categoryService = catService;
+            _productCategoryService = prodCatService;
         }
 
         async partial void OnCategoryIdChanged(string value)
@@ -42,51 +37,34 @@ namespace Grocery.App.ViewModels
 
         private async Task LoadDataAsync(int categoryId)
         {
-            CurrentCategory = await _categoryRepo.GetAsync(categoryId);
-
-            var allProducts = await _productRepo.GetAllAsync();
-
-
-            var allProductCategories = await _productCategoryRepo.GetByCategoryIdAsync(categoryId);
-            var assignedProductIds = allProductCategories.Select(pc => pc.ProductId).ToHashSet();
+            CurrentCategory = await _categoryService.GetCategoryByIdAsync(categoryId);
+            var productSets = await _productCategoryService.GetAssignedAndAvailableProductsAsync(categoryId);
 
             AssignedProducts.Clear();
+            foreach (var p in productSets.Assigned) AssignedProducts.Add(p);
+
             AvailableProducts.Clear();
-            foreach (var product in allProducts)
-            {
-                if (assignedProductIds.Contains(product.Id))
-                {
-                    AssignedProducts.Add(product);
-                }
-                else
-                {
-                    AvailableProducts.Add(product);
-                }
-            }
+            foreach (var p in productSets.Available) AvailableProducts.Add(p);
         }
 
         [RelayCommand]
         private async Task AddToCategory(Product product)
         {
             if (product == null) return;
-
-            await _productCategoryRepo.AddRelationAsync(product.Id, CurrentCategory.Id);
+            await _productCategoryService.AssignProductToCategoryAsync(product.Id, CurrentCategory.Id);
 
             AvailableProducts.Remove(product);
             AssignedProducts.Add(product);
-
         }
 
         [RelayCommand]
         private async Task RemoveFromCategory(Product product)
         {
             if (product == null) return;
-
-            await _productCategoryRepo.RemoveRelationAsync(product.Id, CurrentCategory.Id);
+            await _productCategoryService.RemoveProductFromCategoryAsync(product.Id, CurrentCategory.Id);
 
             AssignedProducts.Remove(product);
             AvailableProducts.Add(product);
-
         }
     }
 }
