@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:Grocery.App.ViewModels"
+             xmlns:m="clr-namespace:Grocery.Core.Models;assembly=Grocery.Core"
+             x:Class="Grocery.App.Views.CategoryDetailView"
+             x:DataType="vm:CategoryDetailViewModel"
+             Title="{Binding CurrentCategory.Name, StringFormat='Beheer categorie: {0}'}">
+
+    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" Padding="10" RowDefinitions="Auto, *">
+
+        <Label Grid.Row="0" Grid.Column="0" Text="Producten in categorie" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+        <Label Grid.Row="0" Grid.Column="1" Text="Beschikbare producten" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+
+        <CollectionView Grid.Row="1" Grid.Column="0" ItemsSource="{Binding AssignedProducts}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Product">
+                    <Frame Padding="10" Margin="5">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CategoryDetailViewModel}}, Path=RemoveFromCategoryCommand}" 
+                                CommandParameter="{Binding .}"/>
+                        </Frame.GestureRecognizers>
+                        <Label Text="{Binding Name}" VerticalOptions="Center"/>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <CollectionView Grid.Row="1" Grid.Column="1" ItemsSource="{Binding AvailableProducts}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="m:Product">
+                    <Frame Padding="10" Margin="5">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer 
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CategoryDetailViewModel}}, Path=AddToCategoryCommand}" 
+                                CommandParameter="{Binding .}"/>
+                        </Frame.GestureRecognizers>
+                        <Label Text="{Binding Name}" VerticalOptions="Center"/>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+
+</ContentPage>
