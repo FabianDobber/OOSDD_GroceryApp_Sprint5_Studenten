@@ -15,6 +15,13 @@ namespace Grocery.Core.Models
             ShelfLife = shelfLife;
             Price = price;
         }
+
+        public Product(int id, string name, int stock, DateOnly dateOnly) : base(id, name)
+        {
+            this.stock = stock;
+            DateOnly = dateOnly;
+        }
+
         public override string? ToString()
         {
             return $"{Name} - {Stock} op voorraad";
